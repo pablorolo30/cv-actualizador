@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV · Dr. Romero López</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1f3d; --navy2: #1a3260; --gold: #c9a84c; --gold2: #e8c96a;
+    --cream: #f7f3ed; --cream2: #ede8e0; --green: #2d6a4f; --green2: #40916c;
+    --red: #c1392b; --text: #1a1a2e; --muted: #6b7280; --white: #ffffff;
+    --shadow: 0 4px 24px rgba(15,31,61,0.10);
+    --shadow-lg: 0 12px 48px rgba(15,31,61,0.16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #0f1f3d 0%, #1d4ed8 100%);
+    padding: 0; position: relative; overflow: hidden;
+  }
+  header::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(201,168,76,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 680px; margin: 0 auto; padding: 32px 24px 24px; position: relative; z-index: 1; }
+  .header-tag {
+    display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+    background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3);
+    padding: 4px 10px; border-radius: 4px; margin-bottom: 12px;
+  }
+  h1 { font-family: 'DM Serif Display', serif; font-size: clamp(20px,5vw,28px); color: var(--white); line-height: 1.2; margin-bottom: 6px; }
+  h1 em { color: var(--gold2); font-style: italic; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 300; }
+  .status-bar {
+    display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .status-pill {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .status-pill.ok { background: rgba(45,106,79,0.4); color: #6ee7b7; }
+  .status-pill.pending { background: rgba(201,168,76,0.2); color: var(--gold2); }
+
+  main { max-width: 680px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* ── LOGIN ── */
+  .login-card {
+    background: var(--white); border-radius: 16px; padding: 36px 24px;
+    text-align: center; box-shadow: var(--shadow); margin-bottom: 20px;
+  }
+  .login-icon { font-size: 48px; margin-bottom: 16px; }
+  .login-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+  .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+  .btn-google {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--white); color: var(--text); border: 1.5px solid var(--cream2);
+    border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+  }
+  .btn-google:hover { border-color: #4285f4; box-shadow: 0 4px 16px rgba(66,133,244,0.2); transform: translateY(-1px); }
+  .google-logo { width: 20px; height: 20px; }
+
+  /* ── UPLOAD ── */
+  .upload-zone {
+    border: 2px dashed var(--cream2); border-radius: 16px; padding: 32px 20px;
+    text-align: center; cursor: pointer; transition: all 0.25s;
+    background: var(--white); margin-bottom: 16px;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--navy2); background: #f0f4ff;
+    transform: translateY(-1px); box-shadow: var(--shadow);
+  }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 36px; margin-bottom: 12px; }
+  .upload-title { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--muted); }
+  .upload-types { display: flex; gap: 6px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+  .upload-type { font-family: 'DM Mono', monospace; font-size: 10px; background: var(--cream); color: var(--muted); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--cream2); }
+
+  .file-preview {
+    background: var(--white); border: 1.5px solid var(--cream2); border-radius: 12px;
+    padding: 12px 16px; display: none; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .file-icon { width: 38px; height: 38px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 13px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-size { font-size: 11px; color: var(--muted); }
+  .file-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 4px; border-radius: 6px; transition: all 0.15s; }
+  .file-remove:hover { background: #fee2e2; color: var(--red); }
+
+  .or-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--cream2); }
+
+  textarea {
+    width: 100%; min-height: 80px; border: 1.5px solid var(--cream2); border-radius: 12px;
+    padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+    color: var(--text); background: var(--white); resize: vertical; outline: none;
+    transition: border 0.2s; line-height: 1.6; margin-bottom: 16px;
+  }
+  textarea:focus { border-color: var(--navy2); box-shadow: 0 0 0 3px rgba(26,50,96,0.08); }
+  textarea::placeholder { color: #b0b8c8; }
+
+  .btn-process {
+    width: 100%; background: var(--navy); color: var(--white); border: none;
+    border-radius: 14px; padding: 15px; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center;
+    justify-content: center; gap: 10px; margin-bottom: 20px;
+  }
+  .btn-process:hover:not(:disabled) { background: var(--navy2); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .btn-process:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box { background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 12px; padding: 12px 16px; color: var(--red); font-size: 13px; margin-bottom: 16px; display: none; }
+
+  /* ── PROGRESO ── */
+  .progress-card {
+    background: var(--white); border: 1.5px solid var(--cream2); border-radius: 16px;
+    padding: 20px; margin-bottom: 16px; display: none;
+    box-shadow: var(--shadow); animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .progress-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+  .step { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+  .step-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  .step-icon.pending { background: var(--cream2); color: var(--muted); }
+  .step-icon.active { background: #dbeafe; color: #1d4ed8; animation: pulse 1s infinite; }
+  .step-icon.done { background: #d1fae5; color: var(--green); }
+  .step-icon.error { background: #fee2e2; color: var(--red); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .step-label { color: var(--text); }
+  .step-label.muted { color: var(--muted); }
+
+  /* ── RESULTADO ── */
+  .result-card {
+    background: var(--white); border: 2px solid #bbf7d0; border-radius: 16px;
+    overflow: hidden; margin-bottom: 16px; display: none;
+    box-shadow: var(--shadow); animation: slideUp 0.3s ease;
+  }
+  .result-header { background: var(--green); padding: 16px 20px; }
+  .result-header-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .result-header-sub { font-size: 12px; color: rgba(255,255,255,0.75); }
+  .result-body { padding: 20px; }
+  .result-entries { display: flex; flex-direction: column; gap: 12px; }
+  .entry-block {
+    background: var(--cream); border-radius: 10px; padding: 14px;
+    border-left: 3px solid var(--navy2);
+  }
+  .entry-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .entry-badge { background: var(--navy); color: var(--gold); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+  .entry-section { font-size: 12px; color: var(--muted); }
+  .entry-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .entry-folder { font-family: 'DM Mono', monospace; font-size: 11px; color: #78350f; background: #fff8e7; border: 1px solid #fde68a; border-radius: 6px; padding: 5px 10px; margin-top: 8px; display: inline-block; }
+
+  .result-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .btn-action { flex: 1; min-width: 100px; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn-primary { background: var(--navy); color: var(--white); }
+  .btn-primary:hover { background: var(--navy2); }
+  .btn-secondary { background: var(--cream); color: var(--navy); border: 1.5px solid var(--cream2); }
+  .btn-secondary:hover { background: var(--cream2); }
+
+  /* ── HISTORIAL ── */
+  .history-section { margin-top: 8px; display: none; }
+  .history-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .history-title::after { content: ''; flex: 1; height: 1px; background: var(--cream2); }
+  .history-item { background: var(--white); border: 1px solid var(--cream2); border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; display: flex; gap: 10px; align-items: flex-start; }
+  .history-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--white); background: var(--navy); padding: 2px 7px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; }
+  .history-text { font-size: 12px; color: var(--text); flex: 1; min-width: 0; }
+  .history-status { font-size: 11px; white-space: nowrap; }
+
+  @media (max-width: 480px) { .result-actions, .status-bar { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-tag">CV Automático · FES Iztacala UNAM</div>
+    <h1>Actualizador de CV<br><em>Dr. José Pablo Romero López</em></h1>
+    <p class="header-sub">Sube la constancia → Se clasifica → Se inserta en Docs → Se archiva en Drive</p>
+    <div class="status-bar">
+      <div class="status-pill" id="pillAuth">⚪ Sin conectar a Google</div>
+      <div class="status-pill ok">✅ Docs API lista</div>
+      <div class="status-pill ok">✅ Drive API lista</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- LOGIN -->
+  <div class="login-card" id="loginCard">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Conecta tu cuenta de Google</div>
+    <div class="login-sub">
+      La app necesita acceso a tu Google Drive y Google Docs para<br>
+      insertar entradas en el CV y archivar las constancias automáticamente.
+    </div>
+    <button class="btn-google" onclick="iniciarLogin()">
+      <svg class="google-logo" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Conectar con Google
+    </button>
+  </div>
+
+  <!-- UPLOAD (oculto hasta login) -->
+  <div id="mainApp" style="display:none">
+
+    <!-- API Key de Anthropic -->
+    <div id="apiKeyBanner" style="background:#fff8e7;border:1.5px solid var(--gold);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;align-items:center;">
+      <span style="font-size:20px;flex-shrink:0;">🤖</span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px;">API Key de Anthropic (para clasificación con IA)</div>
+        <div style="display:flex;gap:8px;">
+          <input id="apiKeyInput" type="password" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:7px 10px;border:1px solid #fde68a;border-radius:7px;background:#fffdf5;font-family:'DM Mono',monospace;outline:none;">
+          <button onclick="guardarApiKey()" style="background:var(--navy);color:white;border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone" id="uploadZone"
+      ondragover="event.preventDefault();this.classList.add('dragover')"
+      ondragleave="this.classList.remove('dragover')"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" accept=".pdf,image/*" onchange="handleFile(this.files[0])">
+      <div class="upload-icon">📎</div>
+      <div class="upload-title">Sube tu constancia</div>
+      <div class="upload-sub">Arrastra aquí o toca para seleccionar</div>
+      <div class="upload-types">
+        <span class="upload-type">PDF</span>
+        <span class="upload-type">JPG</span>
+        <span class="upload-type">PNG</span>
+        <span class="upload-type">Foto</span>
+      </div>
+    </div>
+
+    <div class="file-preview" id="filePreview">
+      <div class="file-icon">📄</div>
+      <div class="file-info">
+        <div class="file-name" id="fileName">archivo.pdf</div>
+        <div class="file-size" id="fileSize">0 KB</div>
+      </div>
+      <button class="file-remove" onclick="limpiarArchivo()">✕</button>
+    </div>
+
+    <div class="or-divider">o describe la constancia</div>
+    <textarea id="textInput" placeholder='Ej: "Asistencia al curso de Citometría de Flujo, 20 hrs, ENCB-IPN, 15 de marzo 2025"'></textarea>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <button class="btn-process" id="btnProcess" onclick="procesarTodo()">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">🚀 Clasificar, insertar en CV y archivar</span>
+    </button>
+
+    <!-- Progreso -->
+    <div class="progress-card" id="progressCard">
+      <div class="progress-title">⏳ Procesando constancia...</div>
+      <div class="step" id="step1">
+        <div class="step-icon pending" id="step1Icon">1</div>
+        <div class="step-label muted" id="step1Label">Clasificando con IA...</div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-icon pending" id="step2Icon">2</div>
+        <div class="step-label muted" id="step2Label">Insertando en Google Docs CV...</div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-icon pending" id="step3Icon">3</div>
+        <div class="step-label muted" id="step3Label">Moviendo archivo a carpeta correcta...</div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-header-title">✅ CV actualizado exitosamente</div>
+        <div class="result-header-sub" id="resultSub">Entradas insertadas y constancia archivada</div>
+      </div>
+      <div class="result-body">
+        <div class="result-entries" id="resultEntries"></div>
+        <div class="result-actions">
+          <button class="btn-action btn-primary" onclick="abrirCV()">📄 Ver CV actualizado</button>
+          <button class="btn-action btn-secondary" onclick="abrirDrive()">📂 Ver en Drive</button>
+          <button class="btn-action btn-secondary" onclick="nuevaConstancia()">➕ Nueva constancia</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div class="history-section" id="historySection">
+      <div class="history-title">Historial de esta sesión</div>
+      <div id="historyList"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ─── CONFIGURACIÓN ────────────────────────────────────────
+const CLIENT_ID = '800803736645-8t9ln35pre3siul98sm2imf83hc0rieu.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/documents https://www.googleapis.com/auth/drive';
+const CV_DOC_ID = '13DeJhkNLh-sbFUOcCATGlz0SS0vbxunGsCBgegmmmBE';
+const CARPETA_ENTRADA_ID = '186UcwNHEnfmU22fSsyw9v1sWDJkJCJUr';
+const CARPETA_PROBATORIOS_ID = '1E-nMDwdMUzLXYZDCQtEbYLRvvDm6H0WA';
+
+// ─── ESTADO ───────────────────────────────────────────────
+let accessToken = null;
+let archivoActual = null;
+let archivoB64 = null;
+let archivoMime = null;
+let historial = [];
+
+// ─── CONTADORES ───────────────────────────────────────────
+const NEXT_ITEM = {
+  "1.2.1":24,"1.2.3":16,"1.2.4":6,"1.2.6":5,
+  "2.1.1":31,"2.1.2":14,"2.1.3":12,
+  "2.2.2":7,"2.2.3":2,"2.2.4":4,"2.2.5":9,
+  "2.2.8":4,"2.2.9":5,"2.2.10":2,
+  "2.2.13":4,"2.2.14":10,"2.2.15":4,"2.2.16":2,
+  "2.2.17":7,"2.2.20":4,
+  "3.1.2":4,"3.1.5":14,"3.1.7":22,"3.1.16":5,
+  "3.1.18":19,"3.1.19":6,"3.1.20":7,
+  "3.1.27":9,"3.1.28":12,"3.1.29":4,
+  "4.2":2,"4.7":2,"5.1":15,"5.9":2,"5.11":4,"5.12":6
+};
+
+const MAPA_CARPETAS = {
+  "1.2.1":["1. FORMACION","1.2","1.2.1"],
+  "1.2.3":["1. FORMACION","1.2","1.2.3"],
+  "1.2.4":["1. FORMACION","1.2","1.2.4"],
+  "1.2.6":["1. FORMACION","1.2","1.2.6"],
+  "2.1.1":["2. FORMACION DE RECURSOS HUMANOS","2.1","2.1.1"],
+  "2.1.2":["2. FORMACION DE RECURSOS HUMANOS","2.1","2.1.2"],
+  "2.1.3":["2. FORMACION DE RECURSOS HUMANOS","2.1","2.1.3"],
+  "2.2.2":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.2"],
+  "2.2.3":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.3"],
+  "2.2.4":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.4"],
+  "2.2.5":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.5"],
+  "2.2.8":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.8"],
+  "2.2.9":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.9"],
+  "2.2.10":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.10"],
+  "2.2.13":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.13"],
+  "2.2.14":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.14"],
+  "2.2.15":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.15"],
+  "2.2.16":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.16"],
+  "2.2.17":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.17"],
+  "2.2.20":["2. FORMACION DE RECURSOS HUMANOS","2.2","2.2.20"],
+  "3.1.2":["3. PRODUCTIVIDAD","3.1","3.1.2"],
+  "3.1.5":["3. PRODUCTIVIDAD","3.1","3.1.5"],
+  "3.1.7":["3. PRODUCTIVIDAD","3.1","3.1.7"],
+  "3.1.16":["3. PRODUCTIVIDAD","3.1","3.1.16"],
+  "3.1.18":["3. PRODUCTIVIDAD","3.1","3.1.18"],
+  "3.1.19":["3. PRODUCTIVIDAD","3.1","3.1.19"],
+  "3.1.20":["3. PRODUCTIVIDAD","3.1","3.1.20"],
+  "3.1.27":["3. PRODUCTIVIDAD","3.1","3.1.27"],
+  "3.1.28":["3. PRODUCTIVIDAD","3.1","3.1.28"],
+  "3.1.29":["3. PRODUCTIVIDAD","3.1","3.1.29"],
+  "4.2":["4. DIVULGACION","4.2"],
+  "4.7":["4. DIVULGACION","4.7"],
+  "5.1":["5. COLABORACION EN PROGRAMAS INSTITUCIONALES","5.1"],
+  "5.9":["5. COLABORACION EN PROGRAMAS INSTITUCIONALES","5.9"],
+  "5.11":["5. COLABORACION EN PROGRAMAS INSTITUCIONALES","5.11"],
+  "5.12":["6. DISTINCIONES"],
+};
+
+const ULTIMO_ITEM = {
+  "1.2.1":"1.2.1.23","1.2.3":"1.2.3.15","1.2.4":"1.2.4.5","1.2.6":"1.2.6.4",
+  "2.1.1":"2.1.1.30","2.1.2":"2.1.2.13","2.1.3":"2.1.3.11",
+  "2.2.2":"2.2.2.6","2.2.3":"2.2.3.1","2.2.4":"2.2.4.3","2.2.5":"2.2.5.8",
+  "2.2.8":"2.2.8.3","2.2.9":"2.2.9.4","2.2.10":"2.2.10.1",
+  "2.2.13":"2.2.13.3","2.2.14":"2.2.14.9","2.2.15":"2.2.15.3","2.2.16":"2.2.16.1",
+  "2.2.17":"2.2.17.6","2.2.20":"2.2.20.3",
+  "3.1.2":"3.1.2.3","3.1.5":"3.1.5.13","3.1.7":"3.1.7.21","3.1.16":"3.1.16.4",
+  "3.1.18":"3.1.18.18","3.1.19":"3.1.19.5","3.1.20":"3.1.20.6",
+  "3.1.27":"3.1.27.8","3.1.28":"3.1.28.11","3.1.29":"3.1.29.3",
+  "4.2":"4.2.1","4.7":"4.7.1","5.1":"5.1.14","5.9":"5.9.1","5.11":"5.11.3","5.12":"5.12.5",
+};
+
+const SYSTEM_PROMPT = `Eres un asistente especializado en actualizar el CV del Dr. José Pablo Romero López, investigador de inmunología de la FES Iztacala-UNAM.
+
+Analiza el documento y determina en CUÁNTAS secciones aplica. Algunos documentos aplican a UNA sola sección, otros a VARIAS simultáneamente. Ejemplos:
+- Acta de examen profesional donde el Dr. Romero fue SECRETARIO: aplica a 2.2.13 (sinodal lic) Y a 2.2.4 (dirección tesis lic concluida) si él fue director.
+- Constancia de tesis maestría concluida: aplica a 2.2.5 (dirección concluida) Y 2.2.14 (sinodal maestría).
+- Artículo publicado: aplica solo a 3.1.5.
+
+Secciones:
+1.2.1 Cursos/talleres | 1.2.3 Congresos nacionales | 1.2.4 Congresos internacionales | 1.2.6 Estancias
+2.1.1 Docencia obligatoria UNAM | 2.1.2 Docencia no obligatoria UNAM | 2.1.3 Docencia fuera UNAM
+2.2.2 Tesis maestría proceso | 2.2.3 Tesis doctorado proceso | 2.2.4 Tesis licenciatura concluida | 2.2.5 Tesis maestría concluida
+2.2.8 Dict. lic | 2.2.9 Dict. maestría | 2.2.10 Dict. doctorado
+2.2.13 Sinodal lic | 2.2.14 Sinodal maestría | 2.2.15 Sinodal predoctoral | 2.2.16 Sinodal doctorado
+2.2.17 Tutorías | 2.2.20 Servicio social
+3.1.2 Artículo revista | 3.1.5 Artículo factor impacto | 3.1.7 Memorias congreso | 3.1.16 Dict. artículo
+3.1.18 Ponencia nacional | 3.1.19 Ponencia internacional | 3.1.20 Conferencia nacional
+3.1.27 Comité evaluador | 3.1.28 Organización eventos | 3.1.29 Proyectos financiamiento
+4.2 Ponencia divulgación | 4.7 Dict. divulgación
+5.1 Revisión programas | 5.9 Evaluación proyectos | 5.11 Obtención recursos | 5.12 Distinciones/premios
+
+Responde SOLO con JSON válido sin markdown:
+{"entradas":[{"seccion":"X.X","nombre_seccion":"nombre","texto_item":"texto sin número de ítem, conciso con fechas e institución","confianza":"alta|media|baja","nota":""}]}`;
+
+// ─── GOOGLE LOGIN ──────────────────────────────────────────
+function iniciarLogin() {
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: window.location.origin + window.location.pathname,
+    response_type: 'token',
+    scope: SCOPES,
+    prompt: 'select_account'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+}
+
+function verificarToken() {
+  // Revisar hash de URL (OAuth implicit flow)
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  if (token) {
+    accessToken = token;
+    localStorage.setItem('cv_google_token', token);
+    localStorage.setItem('cv_token_time', Date.now().toString());
+    window.history.replaceState({}, document.title, window.location.pathname);
+    mostrarApp();
+    return;
+  }
+  // Revisar token guardado (válido por 1 hora)
+  const saved = localStorage.getItem('cv_google_token');
+  const savedTime = parseInt(localStorage.getItem('cv_token_time') || '0');
+  if (saved && (Date.now() - savedTime) < 3500000) {
+    accessToken = saved;
+    mostrarApp();
+    return;
+  }
+  // Mostrar login
+  document.getElementById('loginCard').style.display = 'block';
+}
+
+function mostrarApp() {
+  document.getElementById('loginCard').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  const pill = document.getElementById('pillAuth');
+  pill.textContent = '✅ Google conectado';
+  pill.className = 'status-pill ok';
+
+  // Cargar API key guardada
+  const key = localStorage.getItem('cv_api_key');
+  if (key) {
+    document.getElementById('apiKeyInput').value = key;
+    document.getElementById('apiKeyBanner').style.display = 'none';
+  }
+}
+
+function guardarApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key) {
+    localStorage.setItem('cv_api_key', key);
+    document.getElementById('apiKeyBanner').style.display = 'none';
+  }
+}
+
+// ─── ARCHIVOS ─────────────────────────────────────────────
+function handleFile(file) {
+  if (!file) return;
+  archivoActual = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const parts = e.target.result.split(',');
+    archivoB64 = parts[1];
+    archivoMime = file.type;
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+  document.getElementById('filePreview').style.display = 'flex';
+  document.getElementById('uploadZone').style.display = 'none';
+  ocultarError();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+function limpiarArchivo() {
+  archivoActual = null; archivoB64 = null; archivoMime = null;
+  document.getElementById('filePreview').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'block';
+  document.getElementById('fileInput').value = '';
+}
+
+// ─── PROCESO PRINCIPAL ────────────────────────────────────
+async function procesarTodo() {
+  const texto = document.getElementById('textInput').value.trim();
+  if (!archivoActual && !texto) { mostrarError('Sube una constancia o escribe una descripción.'); return; }
+  const apiKey = localStorage.getItem('cv_api_key');
+  if (!apiKey) { mostrarError('Configura tu API Key de Anthropic primero.'); document.getElementById('apiKeyBanner').style.display = 'flex'; return; }
+  if (!accessToken) { mostrarError('Necesitas conectar tu cuenta de Google primero.'); return; }
+
+  setLoading(true);
+  ocultarError();
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('progressCard').style.display = 'block';
+  resetSteps();
+
+  try {
+    // PASO 1: Clasificar con Claude
+    setStep(1, 'active', '🔍 Clasificando con IA...');
+    const entradas = await clasificarConClaude(apiKey, archivoB64, archivoMime, texto);
+    setStep(1, 'done', `✅ ${entradas.length} entrada${entradas.length > 1 ? 's' : ''} identificada${entradas.length > 1 ? 's' : ''}`);
+
+    // PASO 2: Insertar en Google Docs
+    setStep(2, 'active', '📝 Insertando en CV...');
+    const resultados = [];
+    for (const entrada of entradas) {
+      const sec = entrada.seccion;
+      const num = NEXT_ITEM[sec] || 1;
+      const itemCompleto = `${sec}.${num}`;
+      await insertarEnDocs(itemCompleto, entrada.texto_item, sec);
+      NEXT_ITEM[sec] = num + 1;
+      ULTIMO_ITEM[sec] = itemCompleto;
+      resultados.push({ ...entrada, itemCompleto });
+    }
+    setStep(2, 'done', `✅ ${resultados.length} entrada${resultados.length > 1 ? 's' : ''} insertada${resultados.length > 1 ? 's' : ''} en el CV`);
+
+    // PASO 3: Mover archivo
+    setStep(3, 'active', '📂 Archivando constancia...');
+    let movido = false;
+    if (archivoActual) {
+      const fileId = await subirArchivoDrive();
+      if (fileId) {
+        const secPrincipal = resultados[0].seccion;
+        await moverArchivoDrive(fileId, secPrincipal);
+        movido = true;
+      }
+    }
+    setStep(3, movido ? 'done' : 'pending', movido ? '✅ Constancia archivada en Drive' : '⚠️ Archivo no subido (describe manualmente)');
+
+    // Mostrar resultado
+    mostrarResultado(resultados, movido);
+    agregarHistorial(resultados);
+
+  } catch (err) {
+    setStep(1, 'error', '❌ Error: ' + err.message);
+    mostrarError('Error: ' + err.message);
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ─── CLAUDE API ───────────────────────────────────────────
+async function clasificarConClaude(apiKey, b64, mime, texto) {
+  const userContent = [];
+  if (b64) {
+    if (mime === 'application/pdf') {
+      userContent.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 }});
+    } else {
+      userContent.push({ type: 'image', source: { type: 'base64', media_type: mime, data: b64 }});
+    }
+  }
+  userContent.push({ type: 'text', text: texto || 'Analiza este documento y clasifícalo en el CV del Dr. Romero López.' });
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYSTEM_PROMPT, messages: [{ role: 'user', content: userContent }] })
+  });
+  if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Claude error ${resp.status}`); }
+  const data = await resp.json();
+  const raw = data.content[0].text.trim();
+  let parsed;
+  try { parsed = JSON.parse(raw); }
+  catch { const m = raw.match(/\{[\s\S]*\}/); if (m) parsed = JSON.parse(m[0]); else throw new Error('Respuesta inválida de IA'); }
+  return parsed.entradas || [parsed];
+}
+
+// ─── GOOGLE DOCS ──────────────────────────────────────────
+async function insertarEnDocs(itemCompleto, textoItem, seccion) {
+  // 1. Obtener el documento para encontrar la posición
+  const docResp = await fetch(`https://docs.googleapis.com/v1/documents/${CV_DOC_ID}`, {
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+  });
+  if (!docResp.ok) throw new Error('No se pudo leer el CV. Verifica permisos.');
+  const doc = await docResp.json();
+
+  // 2. Buscar la posición del último ítem de esa sección
+  const referencia = ULTIMO_ITEM[seccion] || seccion;
+  let insertIndex = null;
+  const content = doc.body.content;
+
+  for (let i = 0; i < content.length; i++) {
+    const el = content[i];
+    if (el.paragraph) {
+      const paraText = el.paragraph.elements
+        ?.map(e => e.textRun?.content || '')
+        .join('') || '';
+      if (paraText.includes(referencia)) {
+        // Insertar después de este párrafo — al final del índice del párrafo
+        const lastEl = el.paragraph.elements[el.paragraph.elements.length - 1];
+        insertIndex = lastEl.endIndex;
+        break;
+      }
+    }
+  }
+
+  if (!insertIndex) {
+    // Fallback: insertar al final del documento antes del último elemento
+    const last = content[content.length - 1];
+    insertIndex = last.startIndex;
+  }
+
+  // 3. Insertar el texto
+  const textoCompleto = `\n${itemCompleto} ${textoItem}`;
+  const requests = [
+    {
+      insertText: {
+        location: { index: insertIndex },
+        text: textoCompleto
+      }
+    },
+    // Aplicar negrita al número de ítem
+    {
+      updateTextStyle: {
+        range: {
+          startIndex: insertIndex + 1, // +1 por el \n
+          endIndex: insertIndex + 1 + itemCompleto.length
+        },
+        textStyle: { bold: true },
+        fields: 'bold'
+      }
+    },
+    // Quitar negrita al texto descriptivo
+    {
+      updateTextStyle: {
+        range: {
+          startIndex: insertIndex + 1 + itemCompleto.length,
+          endIndex: insertIndex + textoCompleto.length
+        },
+        textStyle: { bold: false, italic: false },
+        fields: 'bold,italic'
+      }
+    }
+  ];
+
+  const batchResp = await fetch(`https://docs.googleapis.com/v1/documents/${CV_DOC_ID}:batchUpdate`, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requests })
+  });
+  if (!batchResp.ok) {
+    const err = await batchResp.json();
+    throw new Error('Error al insertar en Docs: ' + JSON.stringify(err.error?.message));
+  }
+}
+
+// ─── GOOGLE DRIVE ─────────────────────────────────────────
+async function subirArchivoDrive() {
+  if (!archivoActual || !archivoB64) return null;
+
+  const metadata = { name: archivoActual.name, parents: [CARPETA_ENTRADA_ID] };
+  const boundary = 'boundary_cv_upload';
+  const body = [
+    `--${boundary}`,
+    'Content-Type: application/json; charset=UTF-8',
+    '',
+    JSON.stringify(metadata),
+    `--${boundary}`,
+    `Content-Type: ${archivoMime}`,
+    'Content-Transfer-Encoding: base64',
+    '',
+    archivoB64,
+    `--${boundary}--`
+  ].join('\r\n');
+
+  const resp = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': `multipart/related; boundary=${boundary}`
+    },
+    body
+  });
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  return data.id;
+}
+
+async function moverArchivoDrive(fileId, seccion) {
+  const rutaParts = MAPA_CARPETAS[seccion] || ['6. DISTINCIONES'];
+  let carpetaActualId = CARPETA_PROBATORIOS_ID;
+
+  // Navegar/crear la ruta de carpetas
+  for (const nombreCarpeta of rutaParts) {
+    carpetaActualId = await obtenerOCrearCarpeta(nombreCarpeta, carpetaActualId);
+  }
+
+  // Mover el archivo a la carpeta destino
+  const fileInfo = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=parents`, {
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+  });
+  const fileData = await fileInfo.json();
+  const oldParents = (fileData.parents || []).join(',');
+
+  await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?addParents=${carpetaActualId}&removeParents=${oldParents}`, {
+    method: 'PATCH',
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+  });
+}
+
+async function obtenerOCrearCarpeta(nombre, parentId) {
+  // Buscar si ya existe
+  const query = encodeURIComponent(`name='${nombre}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const resp = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, {
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+  });
+  const data = await resp.json();
+  if (data.files && data.files.length > 0) return data.files[0].id;
+
+  // Crear si no existe
+  const createResp = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: nombre, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
+  });
+  const created = await createResp.json();
+  return created.id;
+}
+
+// ─── UI ───────────────────────────────────────────────────
+function mostrarResultado(resultados, movido) {
+  const card = document.getElementById('resultCard');
+  const entries = document.getElementById('resultEntries');
+  const sub = document.getElementById('resultSub');
+
+  sub.textContent = `${resultados.length} entrada${resultados.length > 1 ? 's' : ''} insertada${resultados.length > 1 ? 's' : ''} • ${movido ? 'Constancia archivada' : 'Archivar constancia manualmente'}`;
+
+  entries.innerHTML = resultados.map(r => {
+    const ruta = (MAPA_CARPETAS[r.seccion] || [r.seccion]).join(' / ');
+    return `
+      <div class="entry-block">
+        <div class="entry-header">
+          <span class="entry-badge">${r.itemCompleto}</span>
+          <span class="entry-section">${r.nombre_seccion}</span>
+        </div>
+        <div class="entry-text">${r.itemCompleto} ${r.texto_item}</div>
+        <div class="entry-folder">📁 ${ruta}</div>
+        ${r.nota ? `<div style="font-size:11px;color:#9a3412;margin-top:6px;">📌 ${r.nota}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  card.style.display = 'block';
+  document.getElementById('progressCard').style.display = 'none';
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function agregarHistorial(resultados) {
+  resultados.forEach(r => {
+    historial.unshift({ item: r.itemCompleto, texto: r.texto_item, hora: new Date().toLocaleTimeString('es-MX') });
+  });
+  if (historial.length === 0) return;
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  section.style.display = 'block';
+  list.innerHTML = historial.slice(0, 10).map(h => `
+    <div class="history-item">
+      <div class="history-num">${h.item}</div>
+      <div class="history-text">${h.texto.slice(0, 90)}${h.texto.length > 90 ? '…' : ''}</div>
+      <div class="history-status" style="color:var(--green2)">✅</div>
+    </div>`).join('');
+}
+
+function setStep(num, estado, label) {
+  const icon = document.getElementById(`step${num}Icon`);
+  const lbl = document.getElementById(`step${num}Label`);
+  icon.className = `step-icon ${estado}`;
+  icon.textContent = estado === 'done' ? '✓' : estado === 'error' ? '✕' : num;
+  lbl.textContent = label;
+  lbl.className = `step-label${estado === 'pending' ? ' muted' : ''}`;
+}
+
+function resetSteps() {
+  [1,2,3].forEach(n => setStep(n, 'pending', ['Clasificando con IA...','Insertando en Google Docs CV...','Moviendo archivo a carpeta correcta...'][n-1]));
+}
+
+function setLoading(on) {
+  const btn = document.getElementById('btnProcess');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+  btn.disabled = on;
+  spinner.style.display = on ? 'block' : 'none';
+  btnText.textContent = on ? 'Procesando...' : '🚀 Clasificar, insertar en CV y archivar';
+}
+
+function mostrarError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+}
+
+function ocultarError() { document.getElementById('errorBox').style.display = 'none'; }
+
+function abrirCV() { window.open(`https://docs.google.com/document/d/${CV_DOC_ID}/edit`, '_blank'); }
+function abrirDrive() { window.open(`https://drive.google.com/drive/folders/${CARPETA_PROBATORIOS_ID}`, '_blank'); }
+
+function nuevaConstancia() {
+  limpiarArchivo();
+  document.getElementById('textInput').value = '';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('progressCard').style.display = 'none';
+  ocultarError();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+verificarToken();
+</script>
+</body>
+</html>
