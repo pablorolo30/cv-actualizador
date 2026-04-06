@@ -411,30 +411,72 @@ Secciones:
 Responde SOLO con JSON válido sin markdown:
 {"entradas":[{"seccion":"X.X","nombre_seccion":"nombre","texto_item":"texto sin número de ítem, conciso con fechas e institución","confianza":"alta|media|baja","nota":""}]}`;
 
-// ─── GOOGLE LOGIN ──────────────────────────────────────────
-function iniciarLogin() {
+// ─── GOOGLE LOGIN (PKCE flow) ─────────────────────────────
+function base64urlEncode(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function generarPKCE() {
+  const verifier = base64urlEncode(crypto.getRandomValues(new Uint8Array(32)));
+  const encoded = new TextEncoder().encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', encoded);
+  const challenge = base64urlEncode(hash);
+  return { verifier, challenge };
+}
+
+async function iniciarLogin() {
+  const { verifier, challenge } = await generarPKCE();
+  localStorage.setItem('cv_pkce_verifier', verifier);
+
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     redirect_uri: window.location.origin + window.location.pathname,
-    response_type: 'token',
+    response_type: 'code',
     scope: SCOPES,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+    access_type: 'online',
     prompt: 'select_account'
   });
   window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
 }
 
-function verificarToken() {
-  // Revisar hash de URL (OAuth implicit flow)
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const token = params.get('access_token');
-  if (token) {
-    accessToken = token;
-    localStorage.setItem('cv_google_token', token);
-    localStorage.setItem('cv_token_time', Date.now().toString());
-    window.history.replaceState({}, document.title, window.location.pathname);
-    mostrarApp();
-    return;
+async function intercambiarCodigo(code) {
+  const verifier = localStorage.getItem('cv_pkce_verifier');
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: CLIENT_ID,
+      redirect_uri: window.location.origin + window.location.pathname,
+      grant_type: 'authorization_code',
+      code,
+      code_verifier: verifier
+    })
+  });
+  const data = await resp.json();
+  return data.access_token;
+}
+
+async function verificarToken() {
+  // Revisar código de autorización en URL (PKCE flow)
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    try {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      const token = await intercambiarCodigo(code);
+      if (token) {
+        accessToken = token;
+        localStorage.setItem('cv_google_token', token);
+        localStorage.setItem('cv_token_time', Date.now().toString());
+        mostrarApp();
+        return;
+      }
+    } catch(e) {
+      console.error('Error intercambiando código:', e);
+    }
   }
   // Revisar token guardado (válido por 1 hora)
   const saved = localStorage.getItem('cv_google_token');
