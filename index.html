@@ -577,7 +577,7 @@ async function clasificarConClaude(apiKey, b64, mime, texto) {
 
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-request-header': 'true' },
     body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYSTEM_PROMPT, messages: [{ role: 'user', content: userContent }] })
   });
   if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || `Claude error ${resp.status}`); }
